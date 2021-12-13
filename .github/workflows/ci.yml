@@ -1,0 +1,67 @@
+name: ci
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['12', '14', '16']
+        os: ['ubuntu-latest', 'windows-latest', macos-11',]
+
+    runs-on: ${{ matrix.os }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-node@v2
+      with:
+        cache: yarn
+        node-version: ${{ matrix.node }}
+
+    - name: yarn install
+      run: yarn install --frozen-lockfile
+
+    - name: bootstrap
+      run: yarn bootstrap
+
+    - name: build
+      run: yarn build
+
+    - name: lint
+      if: ${{ runner.os }} == 'macos-11'
+      run: yarn lint
+
+    - name: install neovim
+      run: |
+        if [[ ${{ runner.os }} == 'macos-11' ]]; then
+          curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz
+          tar xzf nvim-macos.tar.gz
+          export PATH="${PATH}:node_modules/.bin:$(pwd)/nvim-osx64/bin"
+        elif [[ ${{ runner.os }} == 'ubuntu-latest' ]]; then
+          curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
+          tar xzf nvim-linux64.tar.gz
+          export PATH="${PATH}:node_modules/.bin:$(pwd)/nvim-linux64/bin"
+        elif [[ ${{ runner.os }} == 'ubuntu-latest' ]]; then
+          curl -LO 'https://github.com/neovim/neovim/releases/download/nightly/nvim-win64.zip'
+          unzip nvim-win64.zip
+          export PATH="${PATH}:node_modules/.bin:$(pwd)/Neovim/bin"
+        fi
+        nvim --version
+
+    - name: test
+      run: |
+        yarn test-build --stream
+
+
+    # todo codecov for macos
+    # - name: codecov
