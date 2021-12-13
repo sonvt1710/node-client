@@ -14,10 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ['12']
-        os: ['ubuntu-latest']
-        # node: ['12', '14', '16']
-        # os: ['ubuntu-latest', 'windows-latest', macos-11',]
+        node: ['12', '14', '16']
+        os: ['ubuntu-latest', 'windows-latest', macos-11',]
         include:
         - os: ubuntu-latest
           NIGHTLY: nvim-linux64.tar.gz
