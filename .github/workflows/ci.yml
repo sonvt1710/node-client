@@ -46,7 +46,7 @@ jobs:
       run: echo "$(pwd)/${{ matrix.NVIM_BIN_PATH }}" >> $GITHUB_PATH
 
     - name: update path (windows)
-      if: ${{ runner.os }} == 'Windows'
+      if: ${{ runner.os }} == Windows
       run: echo "$(pwd)/${{ matrix.NVIM_BIN_PATH }}" >> $GITHUB_PATH | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: yarn install
