@@ -39,10 +39,14 @@ jobs:
       run: |
         curl -LO 'https://github.com/neovim/neovim/releases/download/nightly/${{matrix.NIGHTLY}}'
         ${{matrix.EXTRACT}} ${{matrix.NIGHTLY}}
-        export PATH="${PATH}:node_modules/.bin:$(pwd)/${{matrix.NVIM_BIN_PATH}}"
-        echo $PATH
-        which nvim
-        nvim --version
+
+    - name: update path (bash)
+      if: ${{runner.os}} != 'windows-latest'
+      run: echo "$(pwd)/${{matrix.NVIM_BIN_PATH}}" >> $GITHUB_PATH
+
+    - name: update path (windows)
+      if: ${{runner.os}} == 'windows-latest'
+      run: echo "$(pwd)/${{matrix.NVIM_BIN_PATH}}" >> $GITHUB_PATH | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: yarn install
       run: yarn install --frozen-lockfile
@@ -59,6 +63,10 @@ jobs:
 
     - name: test
       run: |
+        echo $PATH
+        which nvim
+        nvim --version
+
         yarn test-build --stream
 
 
