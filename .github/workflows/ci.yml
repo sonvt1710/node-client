@@ -35,6 +35,15 @@ jobs:
         cache: yarn
         node-version: ${{ matrix.node }}
 
+    - name: install neovim
+      run: |
+        curl -LO 'https://github.com/neovim/neovim/releases/download/nightly/${{matrix.NIGHTLY}}'
+        ${{matrix.EXTRACT}} ${{matrix.NIGHTLY}}
+        export PATH="${PATH}:node_modules/.bin:$(pwd)/${{matrix.NVIM_BIN_PATH}}"
+        echo $PATH
+        which nvim
+        nvim --version
+
     - name: yarn install
       run: yarn install --frozen-lockfile
 
@@ -47,15 +56,6 @@ jobs:
     - name: lint
       if: ${{ runner.os }} == 'macos-11'
       run: yarn lint
-
-    - name: install neovim
-      run: |
-        curl -LO 'https://github.com/neovim/neovim/releases/download/nightly/${{matrix.NIGHTLY}}'
-        ${{matrix.EXTRACT}} ${{matrix.NIGHTLY}}
-        export PATH="${PATH}:node_modules/.bin:$(pwd)/${{matrix.NVIM_BIN_PATH}}
-        echo $PATH
-        which nvim
-        nvim --version
 
     - name: test
       run: |
