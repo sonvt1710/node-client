@@ -37,17 +37,17 @@ jobs:
 
     - name: install neovim
       run: |
-        curl -LO 'https://github.com/neovim/neovim/releases/download/nightly/${{matrix.NIGHTLY}}'
-        ${{matrix.EXTRACT}} ${{matrix.NIGHTLY}}
-        echo '${{runner.os}}'
+        curl -LO 'https://github.com/neovim/neovim/releases/download/nightly/${{ matrix.NIGHTLY }}'
+        ${{ matrix.EXTRACT }} ${{ matrix.NIGHTLY }}
+        echo '${{ runner.os }}'
 
     - name: update path (bash)
-      if: ${{runner.os}} != 'windows-latest'
-      run: echo "$(pwd)/${{matrix.NVIM_BIN_PATH}}" >> $GITHUB_PATH
+      if: ${{ runner.os }} != 'Windows'
+      run: echo "$(pwd)/${{ matrix.NVIM_BIN_PATH }}" >> $GITHUB_PATH
 
     - name: update path (windows)
-      if: ${{runner.os}} == 'windows-latest'
-      run: echo "$(pwd)/${{matrix.NVIM_BIN_PATH}}" >> $GITHUB_PATH | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      if: ${{ runner.os }} == 'Windows'
+      run: echo "$(pwd)/${{ matrix.NVIM_BIN_PATH }}" >> $GITHUB_PATH | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: yarn install
       run: yarn install --frozen-lockfile
